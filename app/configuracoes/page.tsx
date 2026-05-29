@@ -26,7 +26,11 @@ export default function Configuracoes() {
       // Estilo de cabeçalho padrão
       const headerStyle = {
         font: { bold: true, color: { argb: 'FFFFFFFF' } },
-        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2563EB' } },
+        fill: { 
+          type: 'pattern', 
+          pattern: 'solid', 
+          fgColor: { argb: 'FF2563EB' } 
+        } as any, // O "as any" é o truque mais rápido para ignorar a restrição estrita do TypeScript
         alignment: { horizontal: 'center' }
       };
   
