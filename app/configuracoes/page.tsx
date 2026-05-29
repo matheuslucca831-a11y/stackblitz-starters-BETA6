@@ -1,5 +1,5 @@
 'use client';
-import ExcelJS from 'exceljs';
+
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Save, Building2, User, CheckCircle2, 
@@ -17,109 +17,6 @@ export default function Configuracoes() {
   // Estados para controle do Backup
   const [statusBackup, setStatusBackup] = useState<{ tipo: 'sucesso' | 'erro'; msg: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const handleExportarExcel = async () => {
-    try {
-      setStatusBackup({ tipo: 'sucesso', msg: 'Gerando relatório completo...' });
-      
-      const workbook = new ExcelJS.Workbook();
-      
-      // Estilo de cabeçalho padrão
-      const headerStyle = {
-        font: { bold: true, color: { argb: 'FFFFFFFF' } },
-        fill: { 
-          type: 'pattern', 
-          pattern: 'solid', 
-          fgColor: { argb: 'FF2563EB' } 
-        } as any, // O "as any" é o truque mais rápido para ignorar a restrição estrita do TypeScript
-        alignment: { horizontal: 'center' }
-      };
-  
-      // Função auxiliar para criar abas
-      const criarAba = async (nomeAba: string, tabela: string, colunas: any[]) => {
-        const ws = workbook.addWorksheet(nomeAba);
-        ws.columns = colunas;
-        ws.getRow(1).eachCell((cell) => { 
-          cell.fill = headerStyle.fill as any; 
-          cell.font = headerStyle.font; 
-        });
-        
-        const dados = await db.table(tabela).toArray();
-        dados.forEach(item => ws.addRow(item));
-      };
-  
-      // 1. ABA: ENCAMINHAMENTOS (Legado/Fluxo principal)
-      await criarAba('Encaminhamentos', 'encaminhamentos', [
-        { header: 'NOME', key: 'nome', width: 35 },
-        { header: 'CROSS', key: 'cross', width: 15 },
-        { header: 'DATA NASC', key: 'dataNasc', width: 15 },
-        { header: 'TELEFONE', key: 'telefone', width: 20 },
-      
-        { header: 'EXAME / PROCEDIMENTO', key: 'especialidade', width: 30 },
-      
-        { header: 'STATUS', key: 'status', width: 25 },
-      
-        { header: 'DATA REGISTRO', key: 'dataRegistro', width: 15 },
-        { header: 'DATA CHEGADA', key: 'dataChegada', width: 15 },
-      
-        { header: 'LOCAL CONSULTA', key: 'local', width: 30 },
-        { header: 'DATA CONSULTA', key: 'dataConsulta', width: 15 },
-        { header: 'HORA CONSULTA', key: 'horaConsulta', width: 15 },
-      
-        { header: 'OBSERVAÇÃO', key: 'obs', width: 45 },
-      
-        { header: 'MOTIVO CORREÇÃO', key: 'motivoCorrecao', width: 45 },
-        { header: 'DATA RETORNO REGULAÇÃO', key: 'dataRetornoRegulacao', width: 20 }
-      ]);
-  
-      // 3. ABA: EXAMES (Versão 3)
-      await criarAba('Exames', 'exames', [
-        { header: 'CROSS', key: 'cross', width: 15 },
-        { header: 'EXAME', key: 'exame', width: 25 },
-        { header: 'STATUS', key: 'status', width: 15 },
-        { header: 'DATA CHEGADA', key: 'dataChegada', width: 15 }
-      ]);
-  
-      await criarAba('Remessas', 'remessas', [
-        { header: 'Nº REMESSA', key: 'numeroRemessa', width: 15 },
-        { header: 'DESTINO', key: 'destino', width: 30 },
-        { header: 'DE (ORIGEM)', key: 'de', width: 25 },
-        { header: 'A/C', key: 'ac', width: 25 },
-      
-        { header: 'ASSUNTO', key: 'assunto', width: 40 },
-        { header: 'DESCRIÇÃO', key: 'descricao', width: 50 },
-      
-        { header: 'STATUS', key: 'status', width: 18 },
-      
-        { header: 'DATA SAÍDA', key: 'dataSaida', width: 15 },
-        { header: 'DATA RECEBIDO', key: 'dataRecebido', width: 18 },
-        { header: 'RECEBIDO POR', key: 'recebidoPor', width: 35 },
-      
-      
-      ]);
-  
-      // 5. ABA: SOS
-      await criarAba('Manutenção SOS', 'sos', [
-        { header: 'NÚMERO OS', key: 'numeroOS', width: 15 },
-        { header: 'UNIDADE', key: 'unidade', width: 20 },
-        { header: 'STATUS', key: 'status', width: 15 },
-        { header: 'Descrição', key: 'descricaoServico', width: 15 }
-      ]);
-  
-      // Geração do arquivo
-      const buffer = await workbook.xlsx.writeBuffer();
-      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `RELATORIO_COMPLETO_FSPSS_${new Date().toISOString().split('T')[0]}.xlsx`;
-      a.click();
-      
-      setStatusBackup({ tipo: 'sucesso', msg: 'Relatório exportado com sucesso!' });
-    } catch (error) {
-      console.error(error);
-      setStatusBackup({ tipo: 'erro', msg: 'Erro ao gerar Excel completo.' });
-    }
-  };
 
   // FUNÇÃO PARA FORMATAR TELEFONE
   const formatarTelefone = (value: string) => {
@@ -127,6 +24,7 @@ export default function Configuracoes() {
     if (numbers.length > 11) numbers = numbers.substring(0, 11); // Limita a 11 dígitos
 
     if (numbers.length > 6) {
+      // Formato (XX) XXXXX-XXXX ou (XX) XXXX-XXXX
       return numbers.replace(/(\d{2})(\d{4,5})(\d{4})/, '($1) $2-$3');
     } else if (numbers.length > 2) {
       return numbers.replace(/(\d{2})(\d{0,4})/, '($1) $2');
@@ -330,15 +228,6 @@ export default function Configuracoes() {
             >
               <Upload size={14} className="text-emerald-600" />
               Importar Dados
-            </button>
-            {/* BOTÃO EXPORTAR EXCEL */}
-            <button
-              type="button"
-              onClick={handleExportarExcel}
-              className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg py-2.5 px-4 text-xs font-black uppercase tracking-wider transition-colors"
-            >
-              <Download size={14} />
-              Exportar p/ Excel (.xlsx)
             </button>
 
             {/* INPUT DE ARQUIVO INVISÍVEL */}
