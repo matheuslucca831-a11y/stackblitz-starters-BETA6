@@ -127,7 +127,6 @@ export default function Configuracoes() {
     if (numbers.length > 11) numbers = numbers.substring(0, 11); // Limita a 11 dígitos
 
     if (numbers.length > 6) {
-      // Formato (XX) XXXXX-XXXX ou (XX) XXXX-XXXX
       return numbers.replace(/(\d{2})(\d{4,5})(\d{4})/, '($1) $2-$3');
     } else if (numbers.length > 2) {
       return numbers.replace(/(\d{2})(\d{0,4})/, '($1) $2');
