@@ -14,7 +14,7 @@ export default function ConfiguracaoInicial() {
   const [telefone, setTelefone] = useState('');
 
   // FUNÇÃO PARA FORMATAR TELEFONE
-  const formatarTelefone = (value) => {
+  const formatarTelefone = (value: string) => {
     let numbers = value.replace(/\D/g, ''); // Remove não dígitos
     if (numbers.length > 11) numbers = numbers.substring(0, 11); // Limita a 11 dígitos
 
