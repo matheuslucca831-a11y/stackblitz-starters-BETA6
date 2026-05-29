@@ -57,7 +57,7 @@ export default function MarcarChegada() {
 
   const handleKeyDown = (e) => {
     if (!pacientesPentes) return;
-  
+
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       setIndiceSelecionado((prev) => Math.min(prev + 1, pacientesPentes.length - 1));
@@ -71,7 +71,7 @@ export default function MarcarChegada() {
         abrirFormulario(pacientesPentes[indiceSelecionado], 'chegada');
       }
     }
-  }, [expandido, indiceSelecionado, pacientesPentes, handleKeyDown]);
+  };
 
   // Filtro otimizado indexado do Dexie
   const pacientesPentes = useLiveQuery(async () => {
