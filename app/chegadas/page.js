@@ -71,7 +71,7 @@ export default function MarcarChegada() {
         abrirFormulario(pacientesPentes[indiceSelecionado], 'chegada');
       }
     }
-  };
+  }, [expandido, indiceSelecionado, pacientesPentes, handleKeyDown]);
 
   // Filtro otimizado indexado do Dexie
   const pacientesPentes = useLiveQuery(async () => {
