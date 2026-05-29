@@ -35,14 +35,15 @@ export default function Configuracoes() {
       };
   
       // Função auxiliar para criar abas
-      const criarAba = async (nomeAba: string, tabela: any[], colunas: any[]) => {
+      const criarAba = async (nomeAba: string, tabela: string, colunas: any[]) => {
         const ws = workbook.addWorksheet(nomeAba);
         ws.columns = colunas;
-        ws.getRow(1).eachCell((cell) => {
-          cell.fill = headerStyle.fill; 
+        ws.getRow(1).eachCell((cell) => { 
+          cell.fill = headerStyle.fill as any; 
           cell.font = headerStyle.font; 
         });
-        const dados = await db.table(tabela as unknown as string).toArray();
+        
+        const dados = await db.table(tabela).toArray();
         dados.forEach(item => ws.addRow(item));
       };
   
