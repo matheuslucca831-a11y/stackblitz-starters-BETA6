@@ -42,7 +42,7 @@ export default function Configuracoes() {
           cell.fill = headerStyle.fill; 
           cell.font = headerStyle.font; 
         });
-        const dados = await db.table(tabela).toArray();
+        const dados = await db.table(tabela as string).toArray();
         dados.forEach(item => ws.addRow(item));
       };
   
